@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package novumind.goku.proto.storage;
+option go_package = "novumind/goku/proto/go/storage";
+
+message Task {
+  enum StatusCode {
+    PENDING = 0;
+    RUNNING = 1;
+    SUCCESS = 2;
+    FAILED = 3;
+  }
+  string id = 1;
+  string video_url = 2; 
+  int64 start_time = 3;
+  int64 end_time = 4;
+  StatusCode status_code = 5;
+  repeated string model_group_ids = 6;
+  bytes snapshot= 7;
+  repeated string labels = 8;
+}
+
+message Box {
+  int32 x = 1; 
+  int32 y = 2;
+  int32 width = 3;
+  int32 height = 4;
+}
+ 
+message Detail {
+  repeated string class = 1;  // 分类结果
+  repeated float confidence  = 2;  // 分类结果的置信度
+  Box bbox = 3;  // bbox检测结果，只做分类则不存在bbox这个field
+  string id = 4; // 如果做识别或者跟踪，则具备有在视频全局的id或特殊id
+  float obj_score = 5; // Detection Use
+}
+// 关键帧信息
+message FrameMetadata {
+  int64 frame_num = 1;
+  repeated Detail details = 2;
+  string model_id = 3;
+}
+// 模型的输出，由关键帧信息组成
+message ModelOutput {
+  repeated FrameMetadata metadatas = 1;
+  ExampleInfo example_info = 2;
+}
+
+message Loader {
+  CaffeLoader caffe_loader = 1;
+  TensorLoader tf_loader = 2;
+}
+
+message Model {
+  string id = 1;    
+  string name = 2;
+  // deprecated, use model_param instead
+  Loader loader = 3;
+  // the model is used for which model_groups/topics
+  repeated string tags = 4;
+  ModelParam model_param = 5;
+}
+
+// 模型在load时需要指定其默认处理的图像尺寸，Inference时图片会resize成该指定的尺寸
+// deprecated, not used any more
+message ImageSize {
+  int32 width = 1; 
+  int32 height = 2;
+  int32 channels = 3;
+}
+
+// deprecated, use ModelParm instead 
+message CaffeLoader {
+  string model_def = 1;
+  string pretrained_model = 2;
+  ImageSize image_size = 3;
+  string mean_file = 4;
+  double input_scale = 5;
+  double raw_scale = 6;
+  string label_text = 7;
+  repeated string other_params = 8; 
+}
+
+// deprecated, not used any more
+message TensorLoader {
+  string ckpt_path = 1;
+  ImageSize image_size = 2;
+  repeated string other_params = 3;
+}
+
+message ThresholdIdx {
+  double threshold = 1;
+  int32 idx = 2;
+}
+
+// model parameters when initializing a model
+message ModelParam {
+  string novu_model_file = 1;
+  string caffe_model_file = 2;
+  string caffe_trained_file = 3;
+  string mean_file = 4;
+  string label_file = 5;
+  repeated ThresholdIdx threshold_idx = 6;
+  float stddev = 7;
+  int32 base_size = 8;
+  int32 top_k = 9;
+  bool is_bgr = 10;
+}
+
+message ModelGroup {
+  string id = 1;
+  string topic_name = 2;
+  repeated  string model_ids = 3;
+}
+ 
+// Save the snapshot image of the specified frame num which matches one of the model group tags and 
+// confidence bigger than the threshold  
+message ExampleInfo {
+  int32 frame_num = 1;
+  string tag = 2;
+  float confidence = 3;
+  bytes image = 4;
+}

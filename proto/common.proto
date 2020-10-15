@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package novumind.goku.proto.common;
+
+message FeatureVec {
+  repeated float values = 1;
+}
+
+message Rect {
+  int32 x = 1;
+  int32 y = 2;
+  int32 width = 3;
+  int32 height = 4;
+}
+
+message Image {
+  bytes data = 1;
+  enum Format {
+    RAW = 0;
+    JPG = 1;
+  }
+  Format format = 2;
+  int32 width = 3;
+  int32 height = 4;
+}
+
+message VideoMetadata {
+  string addr = 1;
+  int32 width = 2;
+  int32 height = 3;
+  float fps = 4;
+  int64 frame_count = 5;
+  // resized w & h for internal processing.
+  int32 resized_width = 6;
+  int32 resized_height = 7;
+}

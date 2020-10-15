@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+import "storage.proto";
+
+package novumind.goku.proto.worker;
+option go_package = "novumind/goku/proto/go/worker";
+
+// wrapper use AnnotateVideo to call core
+message AnnotateVideoRequest {
+  string request_id = 1;
+  string video_path = 2;
+}
+
+message AnnotateVideoResponse {
+  int64 total_num = 1; // the video's total frame num
+  int64 processed_num = 2; // the frame nums has been processed
+  repeated storage.FrameMetadata metadatas = 3; // core's output
+}
+
+// wrapper poll to check whether core is able to process new video
+message CheckInferenceCoreRequest {}
+
+message CheckInferenceCoreResponse {
+  bool is_able = 1;
+}
+
+message LabelConfidence {
+  string label = 1;
+  double confidence = 2;
+  int64 frame_num = 3;
+}
+
+message VideoSummaryResponse {
+  string request_id = 1;
+  int64 total_frame_num = 2; 
+  repeated LabelConfidence label_confs = 3;
+}
+
+service Worker {
+  rpc AnnotateVideo(AnnotateVideoRequest) returns (stream AnnotateVideoResponse) {}
+  rpc CheckInferenceCore(CheckInferenceCoreRequest) returns (CheckInferenceCoreResponse) {}
+  rpc AnnotateVideoSummary(stream AnnotateVideoRequest) returns (stream VideoSummaryResponse) {}
+}

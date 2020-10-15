@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package novumind.goku.proto.msg;
+option go_package = "novumind/goku/proto/go/msg";
+
+message RequiredModelsMsg {
+  string task_id = 1;
+  string video_path = 2;
+}
+
+message TaskProgressMsg {
+  string task_id = 1;
+  int64 processed_num = 2;
+  int64 total_num = 3;
+  int64 processed_once_num = 4; 
+}

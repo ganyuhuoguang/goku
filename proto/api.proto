@@ -1,0 +1,230 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+import "storage.proto";
+import "worker.proto";
+
+package novumind.goku.proto.api;
+option go_package = "novumind/goku/proto/go/api";
+
+message ModelType {
+  // model group id
+  string id = 1;
+  // model group name
+  string name = 2;
+}
+
+message TaskSearchOption {
+  storage.Task.StatusCode status_code= 1;
+}
+
+message Pagination {
+  int32 page_index = 1;
+  int32 page_size = 2;
+  int32 total = 3;
+}
+
+// Create annotate video task
+message CreateTaskRequest {
+  string video_path = 1;
+  // what models will be used to inference
+  repeated string model_group_names = 2;
+}
+
+message CreateTaskResponse {
+  string task_id = 1;
+}
+
+message CreateClassifyTaskRequest {
+  string video_path = 1;
+  repeated string model_group_names = 2;
+}
+
+message CreateClassifyTaskResponse {
+  string classify_task_id = 1;
+}
+
+message GetTaskRequest {
+  string task_id = 1;
+}
+
+message GetTaskResponse {
+  storage.Task task = 1;
+}
+
+message GetTaskResultRequest {
+  string task_id = 1;
+}
+
+message GetTaskResultResponse {
+  repeated storage.FrameMetadata metadatas = 1;
+}
+
+message GetClassifyTaskResultRequest {
+  string task_id = 1;
+}
+
+message GetClassifyTaskResultResponse {
+  worker.VideoSummaryResponse task_results = 1; 
+}
+
+message ListTasksRequest {
+  Pagination page = 1;
+  TaskSearchOption search_option = 2;
+}
+
+// sorted by task start time desc
+message ListTasksResponse {
+  Pagination page = 1;
+  repeated storage.Task tasks = 2;
+}
+
+message ListClassifyTasksRequest {
+  Pagination page = 1;
+  TaskSearchOption search_option = 2;
+}
+
+// sorted by task start time desc
+message ListClassifyTasksResponse {
+  Pagination page = 1;
+  repeated storage.Task tasks = 2;
+}
+
+message AddModelRequest {
+  storage.Model model = 1;
+  repeated ModelType model_types = 2;
+}
+
+message AddModelResponse {
+  string model_id = 1;
+}
+
+message GetModelRequest {
+  string model_id = 1;
+}
+
+message GetModelResponse {
+  storage.Model model = 1;
+}
+
+message ListModelsRequest {
+}
+
+message ListModelsResponse {
+  repeated storage.Model models = 1;
+}
+
+message UpdateModelTypesRequest {
+  repeated storage.ModelGroup model_types = 1;
+  string model_id = 2;
+}
+
+message UpdateModelTypesResponse {
+}
+
+message ListModelGroupsRequest {
+}
+
+message ListModelGroupsResponse {
+  repeated storage.ModelGroup model_types = 1;
+}
+
+message StartAllModelGroupsRequest {
+}
+
+message StartAllModelGroupsResponse {
+}
+
+service Api {
+
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse) {
+    option (google.api.http) = { 
+      post: "/create_task"   
+      body: "*"       
+    };    
+  }
+
+  rpc CreateClassifyTask(CreateClassifyTaskRequest) returns (CreateClassifyTaskResponse) {
+    option (google.api.http) = { 
+      post: "/create_classify_task"   
+      body: "*"       
+    };    
+  }
+
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse) {
+    option (google.api.http) = {
+        post: "/get_task"
+        body: "*"
+    };
+  }
+
+  rpc GetTaskResult(GetTaskResultRequest) returns (GetTaskResultResponse) {
+    option (google.api.http) = {
+      post: "/get_task_result"
+      body: "*"
+    };    
+  }
+
+  rpc GetClassifyTaskResult(GetClassifyTaskResultRequest) returns (GetClassifyTaskResultResponse) {
+    option (google.api.http) = { 
+      post: "/get_classify_task_result"   
+      body: "*"       
+    };    
+  }
+
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse) {
+    option (google.api.http) = {
+        post: "/list_tasks"
+        body: "*"
+    };
+  } 
+
+  rpc ListClassifyTasks(ListClassifyTasksRequest) returns (ListClassifyTasksResponse) {
+    option (google.api.http) = {
+        post: "/list_classify_tasks"
+        body: "*"
+    };
+  } 
+
+  rpc AddModel(AddModelRequest) returns (AddModelResponse) {
+    option (google.api.http) = {
+        post: "/add_model"
+        body: "*"
+    };
+  }
+
+  rpc GetModel(GetModelRequest) returns (GetModelResponse) {
+    option (google.api.http) = {
+        post: "/get_model"
+        body: "*"
+    };
+  }
+
+  rpc ListModels(ListModelsRequest) returns (ListModelsResponse) {
+    option (google.api.http) = {
+        post: "/list_models"
+        body: "*"
+    };
+  }
+
+  rpc UpdateModelTypes(UpdateModelTypesRequest) returns (UpdateModelTypesResponse) {
+    option (google.api.http) = {
+        post: "/update_model_types"
+        body: "*"
+    };
+  }
+
+  rpc ListModelGroups(ListModelGroupsRequest) returns (ListModelGroupsResponse) {
+    option (google.api.http) = {
+        post: "/list_model_types"
+        body: "*"
+    };
+  }
+
+  rpc StartAllModelGroups(StartAllModelGroupsRequest) returns (StartAllModelGroupsResponse) {
+    option (google.api.http) = {
+        post: "/start_all_models"
+        body: "*"
+    };
+  }
+}

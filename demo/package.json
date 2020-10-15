@@ -1,0 +1,32 @@
+{
+  "name": "goku",
+  "version": "1.0.0",
+  "description": "My neat Nuxt.js project",
+  "author": "xcduan",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "build": "nuxt build",
+    "start": "cross-env NODE_ENV=production node server/index.js",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@grpc/proto-loader": "^0.3.0",
+    "@nuxtjs/axios": "^5.0.0",
+    "express": "^4.15.3",
+    "express-ws": "^4.0.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "grpc": "^1.14.1",
+    "iview": "^2.14.3",
+    "kafka-node": "^2.6.1",
+    "mysql": "^2.15.0",
+    "nuxt": "^1.0.0",
+    "protobufjs": "^6.8.6",
+    "uuid": "^3.3.2",
+    "websocket": "^1.0.26"
+  },
+  "devDependencies": {
+    "cross-env": "^5.0.1",
+    "nodemon": "^1.11.0"
+  }
+}

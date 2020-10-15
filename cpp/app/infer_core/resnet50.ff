@@ -1,0 +1,8 @@
+--engine_file=../models/resnet50engine.rt
+--output_blob_file=../models/output_blob_names.txt
+--mean_file=../models/resnet50_trt_mean.txt
+--label_file=../models/synsets.txt
+--dataset_dir=../../../datasets/imagenet/val
+--gt_text=../../../datasets/imagenet/val.txt
+--output_path=../output.txt
+--top_k=5
